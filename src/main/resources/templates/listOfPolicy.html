@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}">
+    <meta charset="utf-8"/>
+    <title>System likwidacji szkód</title>
+</head>
+<header>
+
+    <h1 class="logo">System likwidacji szkód</h1>
+
+    <nav id="navigation">
+
+        <ul class="menu">
+            <li><a href="/">Strona główna</a></li>
+            <li><a href="#">O firmie</a></li>
+            <li><a href="#">Oferta</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li><a href="/reportTheDamage">Zgłoś szkodę</a></li>
+            <li><a href="/listOfDamages">Lista szkód</a></li>
+            <li><a href="/listOfPolicy">Lista polis</a></li>
+            <li><a href="/logout">Wyloguj</a></li>
+        </ul>
+
+    </nav>
+
+</header>
+<body>
+<br/>
+<h3>Lista polis:</h3>
+<table border="1">
+    <tr>
+        <td>Numer polisy</td>
+        <td>Nazwa polisy</td>
+        <td>Imię właściciela</td>
+        <td>Nazwisko właściciela</td>
+        <td>Data rozpoczęcia</td>
+        <td>Data zakończenia</td>
+
+    </tr>
+    <tr th:each="damage :${list}">
+        <td th:text="${damage?.numer}">numer</td>
+        <td th:text="${damage?.nazwa}">nazwa</td>
+        <td th:text="${damage?.osoba?.imie}">imieWlasciciela</td>
+        <td th:text="${damage?.osoba?.nazwisko}">nazwiskoWlasciciela</td>
+        <td th:text="${damage?.dataRozpoczecia}">dataRozpoczecia</td>
+        <td th:text="${damage?.dataZakonczenia}">dataZakonczenia</td>
+    </tr>
+</table>
+<br/>
+<br/>
+<footer>
+    © 2019 sls.pl
+    <span sec:authorize="isAuthenticated()">
+                | Zalogowany użytkownik: <span sec:authentication="name"></span> |
+                Rola: <span sec:authentication="principal.authorities"></span>
+    </span>
+</footer>
+</body>
+</html>

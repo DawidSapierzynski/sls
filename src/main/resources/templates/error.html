@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}">
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+<header>
+
+    <h1 class="logo">System likwidacji szkód</h1>
+
+    <nav id="navigation">
+        <ul class="menu">
+            <li><a href="/">Strona główna</a></li>
+            <li><a href="#">O firmie</a></li>
+            <li><a href="#">Oferta</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li sec:authorize="hasAuthority('LTECH')"><a href="/addValuation">Dodaj wycenę</a></li>
+            <li sec:authorize="hasAuthority('LTECH')"><a href="/listOfDamagesTech">Wyświetl listę szkód</a></li>
+
+            <li sec:authorize="hasAuthority('LMER')"><a href="/approvalOfTheValuation">Zatwierdzenie wyceny</a></li>
+            <li sec:authorize="hasAuthority('LMER')"><a href="/listOfDamagesSub">Wyświetl listę szkód</a></li>
+
+            <li sec:authorize="hasAuthority('PADMIN')"><a href="/addLiquidators">Przypisz likwidatora</a></li>
+
+            <li sec:authorize="hasAuthority('KLIENT')"><a href="/reportTheDamage">Zgłoś szkodę</a></li>
+            <li sec:authorize="hasAuthority('KLIENT')"><a href="/listOfDamages">Lista szkód</a></li>
+            <li sec:authorize="hasAuthority('KLIENT')"><a href="/listOfPolicy">Lista polis</a></li>
+
+            <li sec:authorize="hasRole('ROLE_ANONYMOUS')"><a href="/login">Zaloguj</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/logout">Wyloguj</a></li>
+        </ul>
+    </nav>
+</header>
+<div th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
+<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
+<p th:text="${errorMessage}">Error java.lang.NullPointerException</p>
+</div>
+<br/>
+<br/>
+<footer>
+    © 2019 sls.pl
+    <span sec:authorize="isAuthenticated()">
+                | Zalogowany użytkownik: <span sec:authentication="name"></span> |
+                Rola: <span sec:authentication="principal.authorities"></span>
+    </span>
+</footer>
+</body>
+</html>

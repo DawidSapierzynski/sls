@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}">
+    <meta charset="utf-8"/>
+    <title>System likwidacji szkód</title>
+</head>
+<header>
+
+    <h1 class="logo">System likwidacji szkód</h1>
+
+    <nav id="navigation">
+
+        <ul class="menu">
+            <li><a href="/">Strona główna</a></li>
+            <li><a href="#">O firmie</a></li>
+            <li><a href="#">Oferta</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li><a href="/addValuation">Dodaj wycenę</a></li>
+            <li><a href="/listOfDamagesTech">Wyświetl listę szkód</a></li>
+            <li><a href="/logout">Wyloguj</a></li>
+        </ul>
+
+    </nav>
+
+</header>
+<body>
+<div>
+    <br/>
+    <h3>Lista wszystkich szkód:</h3>
+    <table border="1">
+        <tr>
+            <td>ID szkody</td>
+            <td>Nazwa polisy</td>
+            <td>Imię poszkodowanego</td>
+            <td>Nazwisko poszkodowanego</td>
+            <td>Imię sprawcy</td>
+            <td>Nazwisko sprawcy</td>
+            <td>Imię l. technicznego</td>
+            <td>Nazwisko l. technicznego</td>
+            <td>Imię l. merytorycznego</td>
+            <td>Nazwisko l. merytorycznego</td>
+            <td>Stan</td>
+            <td>Typ</td>
+            <td>Wycena</td>
+            <td>Data Otworzenia</td>
+            <td>Data Zamkniecia</td>
+            <td>Data rozpoczecia likwidacji</td>
+            <td>Data zakonczenia likwidacji</td>
+        </tr>
+        <tr th:each="damage :${list}">
+            <td th:text="${damage?.idSzkoda}">ID szkody</td>
+            <td th:text="${damage?.polisa?.nazwa}">Polisa</td>
+            <td th:text="${damage?.poszkodowany?.imie}">Imię poszkodowanego</td>
+            <td th:text="${damage?.poszkodowany?.nazwisko}">Nazwisko poszkodowanego</td>
+            <td th:text="${damage?.sprawca?.imie}">Imię sprawcy</td>
+            <td th:text="${damage?.sprawca?.nazwisko}">Nazwisko sprawcy</td>
+            <td th:text="${damage?.likwidatorTechniczny?.imie}">Imię l. technicznego</td>
+            <td th:text="${damage?.likwidatorTechniczny?.nazwisko}">Nazwisko l. technicznego</td>
+            <td th:text="${damage?.likwidatorMerytoryczny?.imie}">Imię l. merytorycznego</td>
+            <td th:text="${damage?.likwidatorMerytoryczny?.nazwisko}">Nazwisko l. merytorycznego</td>
+            <td th:text="${damage?.stan}">Stan</td>
+            <td th:text="${damage?.typUszkodzenia}">typ</td>
+            <td th:text="${damage?.wycena}">wycena</td>
+            <td th:text="${damage?.dataOtworzenia}">dataOtworzenia</td>
+            <td th:text="${damage?.dataZamkniecia}">dataZamkniecia</td>
+            <td th:text="${damage?.dataRozpoczeciaLikwidacji}">dataRozpoczeciaLikwidacji</td>
+            <td th:text="${damage?.dataZakonczeniaLikwidacji}">dataZakonczeniaLikwidacji</td>
+        </tr>
+    </table>
+</div>
+<br/>
+<br/>
+<footer>
+    © 2019 sls.pl
+    <span sec:authorize="isAuthenticated()">
+                | Zalogowany użytkownik: <span sec:authentication="name"></span> |
+                Rola: <span sec:authentication="principal.authorities"></span>
+    </span>
+</footer>
+</body>
+</html>

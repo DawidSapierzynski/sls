@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}">
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+<header>
+
+    <h1 class="logo">System likwidacji szkód</h1>
+
+    <nav id="navigation">
+        <ul class="menu">
+            <li><a href="/">Strona główna</a></li>
+            <li><a href="#">O firmie</a></li>
+            <li><a href="#">Oferta</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li sec:authorize="hasRole('ROLE_ANONYMOUS')"><a href="/login">Zaloguj</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/logout">Wyloguj</a></li>
+        </ul>
+    </nav>
+</header>
+<div th:if="${param.error}">
+    Nie poprawna nazwa użytkownika lub hasło.
+</div>
+<div th:if="${param.logout}">
+    Zostałeś/aś wylogowany/a.
+</div>
+<form sec:authorize="hasRole('ROLE_ANONYMOUS')" action="/login" method="post">
+    <div><label> Login: <input type="text" name="username"/> </label></div>
+    <div><label> Hasło: <input type="password" name="password"/> </label></div>
+    <div><input type="submit" value="Zaloguj"/></div>
+</form>
+<div sec:authorize="isAuthenticated()">
+    <h2>
+        Jesteś zalogowany jako "<span sec:authentication="name"></span>"
+    </h2>
+</div>
+<br/>
+<br/>
+
+<footer>
+    © 2019 sls.pl
+    <span sec:authorize="isAuthenticated()">
+                | Zalogowany użytkownik: <span sec:authentication="name"></span> |
+                Rola: <span sec:authentication="principal.authorities"></span>
+    </span>
+</footer>
+</body>
+</html>

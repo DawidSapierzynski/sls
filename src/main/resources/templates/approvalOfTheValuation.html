@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}">
+    <meta charset="utf-8"/>
+    <title>System likwidacji szkód</title>
+</head>
+<header>
+
+    <h1 class="logo">System likwidacji szkód</h1>
+
+    <nav id="navigation">
+
+        <ul class="menu">
+            <li><a href="/">Strona główna</a></li>
+            <li><a href="#">O firmie</a></li>
+            <li><a href="#">Oferta</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li><a href="/approvalOfTheValuation">Zatwierdzenie wyceny</a></li>
+            <li><a href="/listOfDamagesSub">Wyświetl listę szkód</a></li>
+            <li><a href="/logout">Wyloguj</a></li>
+        </ul>
+
+    </nav>
+
+</header>
+<body>
+<div th:if="${selectDamage}" id="selectDamage">
+    <h3>Podgląd szkody:</h3>
+    <table border="1">
+        <tr th:if="${selectDamage}">
+            <td>ID szkody</td>
+            <td>Nazwa polisy</td>
+            <td>Imię poszkodowanego</td>
+            <td>Nazwisko poszkodowanego</td>
+            <td>Imię sprawcy</td>
+            <td>Nazwisko sprawcy</td>
+            <td>Imię l. technicznego</td>
+            <td>Nazwisko l. technicznego</td>
+            <td>Imię l. merytorycznego</td>
+            <td>Nazwisko l. merytorycznego</td>
+            <td>Stan</td>
+            <td>Typ</td>
+            <td>Wycena</td>
+            <td>Data Otworzenia</td>
+            <td>Data Zamkniecia</td>
+            <td>Data rozpoczecia likwidacji</td>
+            <td>Data zakonczenia likwidacji</td>
+        </tr>
+        <tr th:if="${selectDamage}">
+            <td th:text="${selectDamage?.idSzkoda}">ID szkody</td>
+            <td th:text="${selectDamage?.polisa?.nazwa}">Polisa</td>
+            <td th:text="${selectDamage?.poszkodowany?.imie}">Imię poszkodowanego</td>
+            <td th:text="${selectDamage?.poszkodowany?.nazwisko}">Nazwisko poszkodowanego</td>
+            <td th:text="${selectDamage?.sprawca?.imie}">Imię sprawcy</td>
+            <td th:text="${selectDamage?.sprawca?.nazwisko}">Nazwisko sprawcy</td>
+            <td th:text="${selectDamage?.likwidatorTechniczny?.imie}">Imię l. technicznego</td>
+            <td th:text="${selectDamage?.likwidatorTechniczny?.nazwisko}">Nazwisko l. technicznego</td>
+            <td th:text="${selectDamage?.likwidatorMerytoryczny?.imie}">Imię l. merytorycznego</td>
+            <td th:text="${selectDamage?.likwidatorMerytoryczny?.nazwisko}">Nazwisko l. merytorycznego</td>
+            <td th:text="${selectDamage?.stan}">Stan</td>
+            <td th:text="${selectDamage?.typUszkodzenia}">typ</td>
+            <td th:text="${selectDamage?.wycena}">wycena</td>
+            <td th:text="${selectDamage?.dataOtworzenia}">dataOtworzenia</td>
+            <td th:text="${selectDamage?.dataZamkniecia}">dataZamkniecia</td>
+            <td th:text="${selectDamage?.dataRozpoczeciaLikwidacji}">dataRozpoczeciaLikwidacji</td>
+            <td th:text="${selectDamage?.dataZakonczeniaLikwidacji}">dataZakonczeniaLikwidacji</td>
+        </tr>
+    </table>
+    <br/>
+</div>
+<div th:if="${listDocument}" id="listDocument">
+    <h3>Podgląd dokumentów dotyczących szkody:</h3>
+    <table border="2">
+        <tr>
+            <td>Numer dokumentu</td>
+            <td>Typ</td>
+            <td>Numer szkody</td>
+            <td>Imię autora</td>
+            <td>Nazwisko autora</td>
+            <td>Zawartość</td>
+            <td>Data utworzenia</td>
+
+
+        </tr>
+        <tr th:each="document :${listDocument}">
+            <td th:text="${document?.idDokument}">numer</td>
+            <td th:text="${document?.typ}">typ</td>
+            <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
+            <td th:text="${document?.osoba?.imie}">imie</td>
+            <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
+            <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
+            <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
+
+        </tr>
+    </table>
+    <br/>
+    <br/>
+</div>
+<div th:if="${info}" id="info" class="ui-state-error-text">
+    <h3 th:text="${info}"></h3>
+    <br/>
+    <br/>
+</div>
+<div id="formAddValuation">
+    <h2>Podaj dane dotyczące wyceny:</h2>
+    <div id="container">
+        <form method="post">
+            <label for="numberOfDamage">Numer szkody:</label>
+            <select id="numberOfDamage" name="numberOfDamage">
+                <tr th:each="damage :${listDamage}">
+                    <option th:text="${damage?.idSzkoda}">id</option>
+                </tr>
+            </select>
+            <br/>
+            <br/>
+            <label for="option">Opcja do wykonania:</label>
+            <select id="option" name="option">
+                <option tabindex="1">Podgląd</option>
+                <option tabindex="2">Akceptuj wycenę</option>
+                <option tabindex="2">Anuluj wycenę</option>
+            </select>
+            <br/>
+            <br/>
+            <label for="substantiation">Uzasadnienie:<br/></label>
+            <textarea id="substantiation" name="substantiation" cols="70" rows="10"></textarea>
+            <br/>
+            <br/>
+            <div id="lower">
+                <input type="submit" value="Wykonaj">
+            </div>
+        </form>
+    </div>
+</div>
+<br/>
+<br/>
+<footer>
+    © 2019 sls.pl
+    <span sec:authorize="isAuthenticated()">
+                | Zalogowany użytkownik: <span sec:authentication="name"></span> |
+                Rola: <span sec:authentication="principal.authorities"></span>
+    </span>
+</footer>
+</body>
+</html>
