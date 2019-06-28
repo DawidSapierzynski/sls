@@ -38,7 +38,7 @@
     </nav>
 </header>
 <div th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
-<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
+<h1 th:text="|${httpStatus} '-' ${httpStatus.reasonPhrase}|">404</h1>
 <p th:text="${errorMessage}">Error java.lang.NullPointerException</p>
 </div>
 <br/>

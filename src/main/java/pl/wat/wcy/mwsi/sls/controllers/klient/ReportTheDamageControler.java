@@ -50,21 +50,12 @@ public class ReportTheDamageControler {
         return "reportTheDamage";
     }
 
-    @RequestMapping(value = "/reportTheDamage", params = {"info"}, method = RequestMethod.GET)
-    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "info", required = true) String info) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
-        List<PolisaEntity> list = policyService.getActivePolicy(osoba);
-        model.addAttribute("list", list);
-        model.addAttribute("info", info);
-
-        return "reportTheDamage";
-    }
-
     @RequestMapping(value = "/reportTheDamage", params = {"typeDamage", "descriptionDamage", "numberOfPolicy"}, method = RequestMethod.POST)
-    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "typeDamage", required = true) String typeDamage, @RequestParam(value = "descriptionDamage", required = true) String descriptionDamage, @RequestParam(value = "numberOfPolicy", required = true) String numberOfPolicy) {
+    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "typeDamage") String typeDamage, @RequestParam(value = "descriptionDamage") String descriptionDamage, @RequestParam(value = "numberOfPolicy") String numberOfPolicy) {
         OsobaEntity osoba = userService.getByLogin(getLogin());
+
         if (typeDamage.equals("") || descriptionDamage.equals("")) {
-            return "redirect:/reportTheDamage?info=Wypelnij+pola";
+            model.addAttribute("error", "Wypelnij pola");
         } else {
             PolisaEntity polisaEntity = policyService.getPolicyByNumber(numberOfPolicy);
 
@@ -76,7 +67,7 @@ public class ReportTheDamageControler {
             szkodaEntity.setTypUszkodzenia(typeDamage);
             szkodaEntity.setCzyAnulowano((byte) 0);
             szkodaEntity.setCzyZamknieto((byte) 0);
-            szkodaEntity = damageService.save(szkodaEntity);
+            damageService.save(szkodaEntity);
 
             DokumentEntity dokumentEntity = new DokumentEntity();
             String contentsOfTheDocument = TypeDocument.ZGLOSZENIESZKODY.getType().toUpperCase() +
@@ -91,8 +82,11 @@ public class ReportTheDamageControler {
             dokumentEntity.setSzkoda(szkodaEntity);
             documentService.save(dokumentEntity);
 
-            return "redirect:/reportTheDamage?info=Zgloszono";
+            model.addAttribute("success", "Zgloszono");
         }
+        List<PolisaEntity> list = policyService.getActivePolicy(osoba);
+        model.addAttribute("list", list);
+        return "reportTheDamage";
     }
 
     private String getLogin() {

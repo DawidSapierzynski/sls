@@ -6,7 +6,7 @@ public enum ConditionDamage {
     WYCENIONO("Wyceniono"),
     ANULOWANO("Anulowano");
 
-    private String condition;
+    private final String condition;
 
     ConditionDamage(String condition) {
         this.condition = condition;

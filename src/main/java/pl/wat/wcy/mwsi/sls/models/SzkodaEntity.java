@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -150,12 +151,12 @@ public class SzkodaEntity {
         return Objects.hash(idSzkoda, dataOtworzenia, typUszkodzenia, wycena, stan, czyZamknieto, czyAnulowano, dataZamkniecia, dataRozpoczeciaLikwidacji, dataZakonczeniaLikwidacji);
     }
 
-    @OneToMany(mappedBy = "szkoda")
+    @OneToMany(mappedBy = "szkoda", fetch=FetchType.EAGER)
     public Collection<DokumentEntity> getDokumentsByIdSzkoda() {
         return dokumentsByIdSzkoda;
     }
 
-    public void setDokumentsByIdSzkoda(Collection<DokumentEntity> dokumentsByIdSzkoda) {
+    public void setDokumentsByIdSzkoda(List<DokumentEntity> dokumentsByIdSzkoda) {
         this.dokumentsByIdSzkoda = dokumentsByIdSzkoda;
     }
 

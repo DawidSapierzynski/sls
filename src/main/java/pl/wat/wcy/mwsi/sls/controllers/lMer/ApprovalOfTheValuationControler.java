@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.wat.wcy.mwsi.sls.models.*;
 import pl.wat.wcy.mwsi.sls.models.myEnum.ConditionDamage;
-import pl.wat.wcy.mwsi.sls.models.DokumentEntity;
 import pl.wat.wcy.mwsi.sls.models.myEnum.TypeDocument;
 import pl.wat.wcy.mwsi.sls.service.DamageService;
 import pl.wat.wcy.mwsi.sls.service.DocumentService;
@@ -29,7 +28,6 @@ public class ApprovalOfTheValuationControler {
     @Autowired
     private UserService userService;
 
-
     @RequestMapping(value = "/approvalOfTheValuation", method = RequestMethod.GET)
     public String getReportTheDamage(HttpServletRequest request, Model model) {
 
@@ -41,30 +39,15 @@ public class ApprovalOfTheValuationControler {
 
     }
 
-    @RequestMapping(value = "/approvalOfTheValuation", params = {"info"}, method = RequestMethod.GET)
-    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "info", required = true) String info) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
-        List<SzkodaEntity> listDamage = damageService.getActiveDamagesByLSubstantive(osoba);
-        model.addAttribute("listDamage", listDamage);
-        model.addAttribute("info", info);
-
-        return "approvalOfTheValuation";
-    }
-
     @RequestMapping(value = "/approvalOfTheValuation", params = {"option", "numberOfDamage", "substantiation"}, method = RequestMethod.POST)
-    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "option", required = true) String option, @RequestParam(value = "substantiation", required = true) String substantiation, @RequestParam(value = "numberOfDamage", required = true) long numberOfDamage) {
+    public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "option") String option, @RequestParam(value = "substantiation") String substantiation, @RequestParam(value = "numberOfDamage") long numberOfDamage) {
         OsobaEntity osoba = userService.getByLogin(getLogin());
         SzkodaEntity szkodaEntity = damageService.getDamagesById(numberOfDamage);
 
         if (szkodaEntity != null) {
             switch (option) {
                 case "Podgląd":
-                    List<SzkodaEntity> listDamage = damageService.getActiveDamagesByLSubstantive(osoba);
-                    model.addAttribute("listDamage", listDamage);
-                    List<DokumentEntity> listDocument = documentService.getDocumentByDamage(szkodaEntity);
-                    model.addAttribute("listDocument", listDocument);
                     model.addAttribute("selectDamage", szkodaEntity);
-
                     break;
                 case "Akceptuj wycenę": {
                     szkodaEntity.setStan(ConditionDamage.ZAKONCZONO.getCondition());
@@ -82,8 +65,9 @@ public class ApprovalOfTheValuationControler {
                     dokumentEntity.setTyp(TypeDocument.AKCEPTACJAWYCENY.getType());
                     documentService.save(dokumentEntity);
 
-                    return "redirect:/approvalOfTheValuation?info=Akceptowano";
+                    model.addAttribute("success", "Akceptowano");
 
+                    break;
                 }
                 case "Anuluj wycenę": {
                     szkodaEntity.setStan(ConditionDamage.ANULOWANO.getCondition());
@@ -100,14 +84,18 @@ public class ApprovalOfTheValuationControler {
                     dokumentEntity.setTyp(TypeDocument.ANULOWANIEWYCENY.getType());
                     documentService.save(dokumentEntity);
 
-                    return "redirect:/approvalOfTheValuation?info=Anulowano";
+                    model.addAttribute("success", "Anulowano");
+
+                    break;
                 }
             }
-
-            return "approvalOfTheValuation";
         } else {
-            return "redirect:/approvalOfTheValuation?info=Brak+szkody";
+            model.addAttribute("error", "Brak szkody.");
         }
+
+        List<SzkodaEntity> listDamage = damageService.getActiveDamagesByLSubstantive(osoba);
+        model.addAttribute("listDamage", listDamage);
+        return "approvalOfTheValuation";
     }
 
     private DokumentEntity generateDocument(OsobaEntity osoba, SzkodaEntity szkodaEntity, String substantiation) {

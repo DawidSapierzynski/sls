@@ -28,9 +28,21 @@
 
 </header>
 <body>
-<div>
+<div th:if="${listDamage?.size()==0}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a>Brak szkód do wycenienia.</a>
+</div>
+<div th:if="${error}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${error}"></a>
+</div>
+<div th:if="${success}" class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${success}"></a>
+</div>
+<div th:if="${selectDamage}">
     <h3>Lista aktywnych szkód:</h3>
-    <table border="1">
+    <table th:border="1">
         <tr>
             <td>ID szkody</td>
             <td>Nazwa polisy</td>
@@ -46,45 +58,66 @@
             <td>Typ</td>
             <td>Wycena</td>
             <td>Data Otworzenia</td>
-            <td>Data Zamkniecia</td>
             <td>Data rozpoczecia likwidacji</td>
-            <td>Data zakonczenia likwidacji</td>
         </tr>
-        <tr th:each="damage :${list}">
-            <td th:text="${damage?.idSzkoda}">ID szkody</td>
-            <td th:text="${damage?.polisa?.nazwa}">Polisa</td>
-            <td th:text="${damage?.poszkodowany?.imie}">Imię poszkodowanego</td>
-            <td th:text="${damage?.poszkodowany?.nazwisko}">Nazwisko poszkodowanego</td>
-            <td th:text="${damage?.sprawca?.imie}">Imię sprawcy</td>
-            <td th:text="${damage?.sprawca?.nazwisko}">Nazwisko sprawcy</td>
-            <td th:text="${damage?.likwidatorTechniczny?.imie}">Imię l. technicznego</td>
-            <td th:text="${damage?.likwidatorTechniczny?.nazwisko}">Nazwisko l. technicznego</td>
-            <td th:text="${damage?.likwidatorMerytoryczny?.imie}">Imię l. merytorycznego</td>
-            <td th:text="${damage?.likwidatorMerytoryczny?.nazwisko}">Nazwisko l. merytorycznego</td>
-            <td th:text="${damage?.stan}">Stan</td>
-            <td th:text="${damage?.typUszkodzenia}">typ</td>
-            <td th:text="${damage?.wycena}">wycena</td>
-            <td th:text="${damage?.dataOtworzenia}">dataOtworzenia</td>
-            <td th:text="${damage?.dataZamkniecia}">dataZamkniecia</td>
-            <td th:text="${damage?.dataRozpoczeciaLikwidacji}">dataRozpoczeciaLikwidacji</td>
-            <td th:text="${damage?.dataZakonczeniaLikwidacji}">dataZakonczeniaLikwidacji</td>
+        <tr>
+            <td th:text="${selectDamage?.idSzkoda}">ID szkody</td>
+            <td th:text="${selectDamage?.polisa?.nazwa}">Polisa</td>
+            <td th:text="${selectDamage?.poszkodowany?.imie}">Imię poszkodowanego</td>
+            <td th:text="${selectDamage?.poszkodowany?.nazwisko}">Nazwisko poszkodowanego</td>
+            <td th:text="${selectDamage?.sprawca?.imie}">Imię sprawcy</td>
+            <td th:text="${selectDamage?.sprawca?.nazwisko}">Nazwisko sprawcy</td>
+            <td th:text="${selectDamage?.likwidatorTechniczny?.imie}">Imię l. technicznego</td>
+            <td th:text="${selectDamage?.likwidatorTechniczny?.nazwisko}">Nazwisko l. technicznego</td>
+            <td th:text="${selectDamage?.likwidatorMerytoryczny?.imie}">Imię l. merytorycznego</td>
+            <td th:text="${selectDamage?.likwidatorMerytoryczny?.nazwisko}">Nazwisko l. merytorycznego</td>
+            <td th:text="${selectDamage?.stan}">Stan</td>
+            <td th:text="${selectDamage?.typUszkodzenia}">typ</td>
+            <td th:text="${selectDamage?.wycena}">wycena</td>
+            <td th:text="${selectDamage?.dataOtworzenia}">dataOtworzenia</td>
+            <td th:text="${selectDamage?.dataRozpoczeciaLikwidacji}">dataRozpoczeciaLikwidacji</td>
         </tr>
     </table>
     <br/>
     <br/>
-</div>
-<div id="formAddValuation">
-    <div th:if="${info}" id="info" class="ui-state-error-text">
-        <h3 th:text="${info}"></h3>
+    <div id="listDocument">
+        <h3>Podgląd dokumentów dotyczących szkody:</h3>
+        <table th:border="2">
+            <tr>
+                <td>Numer dokumentu</td>
+                <td>Typ</td>
+                <td>Numer szkody</td>
+                <td>Imię autora</td>
+                <td>Nazwisko autora</td>
+                <td>Zawartość</td>
+                <td>Data utworzenia</td>
+
+
+            </tr>
+            <tr th:each="document :${selectDamage?.getDokumentsByIdSzkoda()}">
+                <td th:text="${document?.idDokument}">numer</td>
+                <td th:text="${document?.typ}">typ</td>
+                <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
+                <td th:text="${document?.osoba?.imie}">imie</td>
+                <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
+                <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
+                <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
+
+            </tr>
+        </table>
+        <br/>
         <br/>
     </div>
+</div>
+
+<div id="formAddValuation">
     <h3>Podaj dane dotyczące wyceny:</h3>
     <div id="container">
         <form method="post">
             <label for="numberOfDamage">Numer szkody:</label>
             <select id="numberOfDamage" name="numberOfDamage">
-                <tr th:each="damage :${list}">
-                    <option th:text="${damage?.idSzkoda}">id</option>
+                <tr th:each="numberDamage :${listDamage}">
+                    <option th:text="${numberDamage?.idSzkoda}">id</option>
                 </tr>
             </select>
             <br/>
@@ -93,11 +126,18 @@
             <input type="number" step='0.01' value='0.00' placeholder='0.00' max='2000000' id="amountValuation" name="amountValuation">
             <br/>
             <br/>
+            <label for="option">Opcja do wykonania:</label>
+            <select id="option" name="option">
+                <option tabindex="1">Podgląd</option>
+                <option tabindex="2">Dodaj wycenę</option>
+            </select>
+            <br/>
+            <br/>
             <label for="justificationValuation">Uzasadnienie wyceny:<br/></label>
             <textarea id="justificationValuation" name="justificationValuation" cols="70" rows="10"></textarea>
-            <div id="lower">
+            <div th:if="${listDamage?.size()!=0}" id="lower">
                 <br/>
-                <input type="submit" value="Dodaj wycenę">
+                <input type="submit" value="Wykonaj">
             </div>
         </form>
     </div>

@@ -29,7 +29,7 @@
 <body>
 <div th:if="${selectDamage}" id="selectDamage">
     <h3>Podgląd szkody:</h3>
-    <table border="1">
+    <table th:border="1">
         <tr th:if="${selectDamage}">
             <td>ID szkody</td>
             <td>Nazwa polisy</td>
@@ -49,7 +49,7 @@
             <td>Data rozpoczecia likwidacji</td>
             <td>Data zakonczenia likwidacji</td>
         </tr>
-        <tr th:if="${selectDamage}">
+        <tr>
             <td th:text="${selectDamage?.idSzkoda}">ID szkody</td>
             <td th:text="${selectDamage?.polisa?.nazwa}">Polisa</td>
             <td th:text="${selectDamage?.poszkodowany?.imie}">Imię poszkodowanego</td>
@@ -71,39 +71,46 @@
     </table>
     <br/>
     <br/>
+    <div th:if="${selectDamage?.dokumentsByIdSzkoda}" id="listDocument">
+        <h3>Podgląd dokumentów dotyczących szkody:</h3>
+        <table th:border="2">
+            <tr>
+                <td>Numer dokumentu</td>
+                <td>Typ</td>
+                <td>Numer szkody</td>
+                <td>Imię autora</td>
+                <td>Nazwisko autora</td>
+                <td>Zawartość</td>
+                <td>Data utworzenia</td>
+
+
+            </tr>
+            <tr th:each="document :${selectDamage?.dokumentsByIdSzkoda}">
+                <td th:text="${document?.idDokument}">numer</td>
+                <td th:text="${document?.typ}">typ</td>
+                <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
+                <td th:text="${document?.osoba?.imie}">imie</td>
+                <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
+                <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
+                <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
+
+            </tr>
+        </table>
+        <br/>
+        <br/>
+    </div>
 </div>
-<div th:if="${listDocument}" id="listDocument">
-    <h3>Podgląd dokumentów dotyczących szkody:</h3>
-    <table border="2">
-        <tr>
-            <td>Numer dokumentu</td>
-            <td>Typ</td>
-            <td>Numer szkody</td>
-            <td>Imię autora</td>
-            <td>Nazwisko autora</td>
-            <td>Zawartość</td>
-            <td>Data utworzenia</td>
-
-
-        </tr>
-        <tr th:each="document :${listDocument}">
-            <td th:text="${document?.idDokument}">numer</td>
-            <td th:text="${document?.typ}">typ</td>
-            <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
-            <td th:text="${document?.osoba?.imie}">imie</td>
-            <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
-            <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
-            <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
-
-        </tr>
-    </table>
-    <br/>
-    <br/>
+<div th:if="${listDamage?.size()==0}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a>Brak nowych szkód do przypisania.</a>
 </div>
-<div th:if="${info}" id="info" class="ui-state-error-text">
-    <h3 th:text="${info}"></h3>
-    <br/>
-    <br/>
+<div th:if="${error}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${error}"></a>
+</div>
+<div th:if="${success}" class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${success}"></a>
 </div>
 <div id="formAddLiquidators">
     <h2>Wybierz likwidatorów:</h2>
@@ -140,7 +147,7 @@
             </select>
             <br/>
             <br/>
-            <div id="lower">
+            <div th:if="${listDamage?.size()!=0}" id="lower">
                 <input type="submit" value="Wykonaj">
             </div>
         </form>

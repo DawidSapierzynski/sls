@@ -25,25 +25,33 @@
         </ul>
     </nav>
 </header>
-<div th:if="${param.error}">
-    Nie poprawna nazwa użytkownika lub hasło.
-</div>
-<div th:if="${param.logout}">
-    Zostałeś/aś wylogowany/a.
-</div>
-<form sec:authorize="hasRole('ROLE_ANONYMOUS')" action="/login" method="post">
-    <div><label> Login: <input type="text" name="username"/> </label></div>
-    <div><label> Hasło: <input type="password" name="password"/> </label></div>
-    <div><input type="submit" value="Zaloguj"/></div>
-</form>
 <div sec:authorize="isAuthenticated()">
     <h2>
         Jesteś zalogowany jako "<span sec:authentication="name"></span>"
     </h2>
 </div>
-<br/>
-<br/>
 
+<div class="form-login">
+    <div class="alert" th:if="${param.error}">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Nie poprawna nazwa użytkownika lub hasło.
+    </div>
+    <div class="info" th:if="${param.logout}">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Zostałeś/aś wylogowany/a.
+    </div>
+    <br/>
+    <br/>
+    <form sec:authorize="hasRole('ROLE_ANONYMOUS')" action="/login" method="post">
+        <div><label> Login: <input type="text" name="username"/> </label></div>
+        <div><label> Hasło: <input type="password" name="password"/> </label></div>
+        <div><input type="submit" value="Zaloguj"/></div>
+    </form>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
 <footer>
     © 2019 sls.pl
     <span sec:authorize="isAuthenticated()">

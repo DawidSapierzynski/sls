@@ -29,6 +29,18 @@
 
 </header>
 <body>
+<div th:if="${list?.size()==0}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a>Brak aktywnej polisy.</a>
+</div>
+<div th:if="${error}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${error}"></a>
+</div>
+<div th:if="${success}" class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${success}"></a>
+</div>
 <div id="formReportTheDamage">
     <h3>Podaj dane dotyczące szkody:</h3>
     <div id="container">
@@ -47,14 +59,11 @@
             <br/>
             <label for="descriptionDamage">Opis szkody:<br/></label>
             <textarea id="descriptionDamage" name="descriptionDamage" cols="70" rows="10"></textarea>
-            <div id="lower">
+            <div th:if="${list?.size()!=0}" id="lower">
                 <br/>
                 <input type="submit" value="Zgłoś">
             </div>
         </form>
-    </div>
-    <div th:if="${info}" id="info" class="ui-state-error-text">
-        <h3 th:text="${info}"></h3>
     </div>
 </div>
 <br/>

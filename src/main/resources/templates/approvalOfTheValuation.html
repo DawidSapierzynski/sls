@@ -28,9 +28,21 @@
 
 </header>
 <body>
+<div th:if="${listDamage?.size()==0}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a>Brak szkód do wycenienia.</a>
+</div>
+<div th:if="${error}" class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${error}"></a>
+</div>
+<div th:if="${success}" class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    <a th:text="${success}"></a>
+</div>
 <div th:if="${selectDamage}" id="selectDamage">
     <h3>Podgląd szkody:</h3>
-    <table border="1">
+    <table th:border="1">
         <tr th:if="${selectDamage}">
             <td>ID szkody</td>
             <td>Nazwa polisy</td>
@@ -71,40 +83,37 @@
         </tr>
     </table>
     <br/>
-</div>
-<div th:if="${listDocument}" id="listDocument">
-    <h3>Podgląd dokumentów dotyczących szkody:</h3>
-    <table border="2">
-        <tr>
-            <td>Numer dokumentu</td>
-            <td>Typ</td>
-            <td>Numer szkody</td>
-            <td>Imię autora</td>
-            <td>Nazwisko autora</td>
-            <td>Zawartość</td>
-            <td>Data utworzenia</td>
+    <br/>
+    <div th:if="${selectDamage.getDokumentsByIdSzkoda()}" id="listDocument">
+        <h3>Podgląd dokumentów dotyczących szkody:</h3>
+        <table th:border="2">
+            <tr>
+                <td>Numer dokumentu</td>
+                <td>Typ</td>
+                <td>Numer szkody</td>
+                <td>Imię autora</td>
+                <td>Nazwisko autora</td>
+                <td>Zawartość</td>
+                <td>Data utworzenia</td>
 
 
-        </tr>
-        <tr th:each="document :${listDocument}">
-            <td th:text="${document?.idDokument}">numer</td>
-            <td th:text="${document?.typ}">typ</td>
-            <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
-            <td th:text="${document?.osoba?.imie}">imie</td>
-            <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
-            <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
-            <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
+            </tr>
+            <tr th:each="document :${selectDamage.getDokumentsByIdSzkoda()}">
+                <td th:text="${document?.idDokument}">numer</td>
+                <td th:text="${document?.typ}">typ</td>
+                <td th:text="${document?.szkoda?.idSzkoda}">szkoda</td>
+                <td th:text="${document?.osoba?.imie}">imie</td>
+                <td th:text="${document?.osoba?.nazwisko}">nazwisko</td>
+                <td style="white-space: pre;" th:text="${document?.zawartosc}">zawartosc</td>
+                <td th:text="${document?.dataUtworzenia}">dataUtworzenia</td>
 
-        </tr>
-    </table>
-    <br/>
-    <br/>
+            </tr>
+        </table>
+        <br/>
+        <br/>
+    </div>
 </div>
-<div th:if="${info}" id="info" class="ui-state-error-text">
-    <h3 th:text="${info}"></h3>
-    <br/>
-    <br/>
-</div>
+
 <div id="formAddValuation">
     <h2>Podaj dane dotyczące wyceny:</h2>
     <div id="container">
@@ -121,7 +130,7 @@
             <select id="option" name="option">
                 <option tabindex="1">Podgląd</option>
                 <option tabindex="2">Akceptuj wycenę</option>
-                <option tabindex="2">Anuluj wycenę</option>
+                <option tabindex="3">Anuluj wycenę</option>
             </select>
             <br/>
             <br/>
@@ -129,7 +138,7 @@
             <textarea id="substantiation" name="substantiation" cols="70" rows="10"></textarea>
             <br/>
             <br/>
-            <div id="lower">
+            <div th:if="${listDamage?.size()!=0}" id="lower">
                 <input type="submit" value="Wykonaj">
             </div>
         </form>

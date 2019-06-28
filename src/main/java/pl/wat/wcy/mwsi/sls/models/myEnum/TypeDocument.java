@@ -6,7 +6,7 @@ public enum TypeDocument {
     WYCENA("Wycena"),
     ANULOWANIEWYCENY("Anulowanie wyceny");
 
-    private String type;
+    private final String type;
 
     TypeDocument(String type) {
         this.type = type;

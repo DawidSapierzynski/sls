@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.wat.wcy.mwsi.sls.models.myEnum.ConditionDamage;
-import pl.wat.wcy.mwsi.sls.models.DokumentEntity;
 import pl.wat.wcy.mwsi.sls.models.myEnum.TypeDocument;
 import pl.wat.wcy.mwsi.sls.service.DamageService;
 import pl.wat.wcy.mwsi.sls.service.DocumentService;
@@ -34,57 +33,57 @@ public class AddValuationControler {
     public String getReportTheDamage(HttpSession session, Model model) {
         OsobaEntity osoba = userService.getByLogin(getLogin());
         List<SzkodaEntity> list = damageService.getActiveDamagesByLTechnical(osoba);
-        model.addAttribute("list", list);
+        model.addAttribute("listDamage", list);
 
         return "addValuation";
     }
 
-    @RequestMapping(value = "/addValuation", params = {"info"}, method = RequestMethod.GET)
-    public String getReportTheDamage(HttpSession session, Model model, @RequestParam(value = "info", required = true) String info) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
-        List<SzkodaEntity> list = damageService.getActiveDamagesByLTechnical(osoba);
-        model.addAttribute("list", list);
-        model.addAttribute("info", info);
-
-        return "addValuation";
-    }
-
-    @RequestMapping(value = "/addValuation", params = {"amountValuation", "justificationValuation", "numberOfDamage"}, method = RequestMethod.POST)
-    public String getReportTheDamage(HttpSession session, Model model, @RequestParam(value = "amountValuation", required = true) double amountValuation, @RequestParam(value = "justificationValuation", required = true) String justificationValuation, @RequestParam(value = "numberOfDamage", required = true) long numberOfDamage) {
+    @RequestMapping(value = "/addValuation", params = {"option", "amountValuation", "justificationValuation", "numberOfDamage"}, method = RequestMethod.POST)
+    public String getReportTheDamage(HttpSession session, Model model, @RequestParam(value = "option") String option, @RequestParam(value = "amountValuation") double amountValuation, @RequestParam(value = "justificationValuation") String justificationValuation, @RequestParam(value = "numberOfDamage") long numberOfDamage) {
 
         OsobaEntity osoba = userService.getByLogin(getLogin());
-
         SzkodaEntity szkodaEntity = damageService.getDamagesById(numberOfDamage);
 
         if (szkodaEntity != null) {
-            szkodaEntity.setStan(ConditionDamage.WYCENIONO.getCondition());
-            szkodaEntity.setWycena(new BigDecimal(amountValuation));
-            szkodaEntity.setCzyAnulowano((byte) 0);
-            damageService.save(szkodaEntity);
+            switch (option) {
+                case "Podgląd":
+                    model.addAttribute("selectDamage", szkodaEntity);
+                    break;
+                case "Dodaj wycenę": {
+                    szkodaEntity.setStan(ConditionDamage.WYCENIONO.getCondition());
+                    szkodaEntity.setWycena(new BigDecimal(amountValuation));
+                    szkodaEntity.setCzyAnulowano((byte) 0);
+                    damageService.save(szkodaEntity);
 
-            String contentsOfTheDocument = TypeDocument.WYCENA.getType().toUpperCase() +
-                    "\nNr polisy: " +
-                    szkodaEntity.getPolisa().getNumer() +
-                    "\nNr szkody: " +
-                    szkodaEntity.getIdSzkoda() +
-                    "\nKwota: " +
-                    amountValuation +
-                    "\nUzasadnienie:\n" +
-                    justificationValuation;
+                    String contentsOfTheDocument = TypeDocument.WYCENA.getType().toUpperCase() +
+                            "\nNr polisy: " +
+                            szkodaEntity.getPolisa().getNumer() +
+                            "\nNr szkody: " +
+                            szkodaEntity.getIdSzkoda() +
+                            "\nKwota: " +
+                            amountValuation +
+                            "\nUzasadnienie:\n" +
+                            justificationValuation;
 
-            DokumentEntity dokumentEntity = new DokumentEntity();
-            dokumentEntity.setOsoba(osoba);
-            dokumentEntity.setSzkoda(szkodaEntity);
-            dokumentEntity.setTyp(TypeDocument.WYCENA.getType());
-            dokumentEntity.setZawartosc(contentsOfTheDocument);
-            dokumentEntity.setDataUtworzenia(new Timestamp(System.currentTimeMillis()));
-            documentService.save(dokumentEntity);
+                    DokumentEntity dokumentEntity = new DokumentEntity();
+                    dokumentEntity.setOsoba(osoba);
+                    dokumentEntity.setSzkoda(szkodaEntity);
+                    dokumentEntity.setTyp(TypeDocument.WYCENA.getType());
+                    dokumentEntity.setZawartosc(contentsOfTheDocument);
+                    dokumentEntity.setDataUtworzenia(new Timestamp(System.currentTimeMillis()));
+                    documentService.save(dokumentEntity);
 
-
-            return "redirect:/addValuation?info=Dodano+wycene";
+                    model.addAttribute("success", "Dodano wycene");
+                    break;
+                }
+            }
         } else {
-            return "redirect:/addValuation?info=Brak+szkody";
+            model.addAttribute("error", "Brak szkody");
         }
+
+        List<SzkodaEntity> list = damageService.getActiveDamagesByLTechnical(osoba);
+        model.addAttribute("listDamage", list);
+        return "addValuation";
 
     }
 
