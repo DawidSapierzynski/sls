@@ -1,7 +1,6 @@
 package pl.wat.wcy.mwsi.sls.controllers.lMer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,17 +30,16 @@ public class ApprovalOfTheValuationControler {
     @RequestMapping(value = "/approvalOfTheValuation", method = RequestMethod.GET)
     public String getReportTheDamage(HttpServletRequest request, Model model) {
 
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         List<SzkodaEntity> listDamage = damageService.getActiveDamagesByLSubstantive(osoba);
         model.addAttribute("listDamage", listDamage);
 
         return "approvalOfTheValuation";
-
     }
 
     @RequestMapping(value = "/approvalOfTheValuation", params = {"option", "numberOfDamage", "substantiation"}, method = RequestMethod.POST)
     public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "option") String option, @RequestParam(value = "substantiation") String substantiation, @RequestParam(value = "numberOfDamage") long numberOfDamage) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         SzkodaEntity szkodaEntity = damageService.getDamagesById(numberOfDamage);
 
         if (szkodaEntity != null) {
@@ -63,7 +61,7 @@ public class ApprovalOfTheValuationControler {
                             substantiation;
                     DokumentEntity dokumentEntity = generateDocument(osoba, szkodaEntity, contentsOfTheDocument);
                     dokumentEntity.setTyp(TypeDocument.AKCEPTACJAWYCENY.getType());
-                    documentService.save(dokumentEntity);
+                    documentService.addDocument(dokumentEntity);
 
                     model.addAttribute("success", "Akceptowano");
 
@@ -82,7 +80,7 @@ public class ApprovalOfTheValuationControler {
                             substantiation;
                     DokumentEntity dokumentEntity = generateDocument(osoba, szkodaEntity, contentsOfTheDocument);
                     dokumentEntity.setTyp(TypeDocument.ANULOWANIEWYCENY.getType());
-                    documentService.save(dokumentEntity);
+                    documentService.addDocument(dokumentEntity);
 
                     model.addAttribute("success", "Anulowano");
 
@@ -109,9 +107,4 @@ public class ApprovalOfTheValuationControler {
 
         return dokumentEntity;
     }
-
-    private String getLogin() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
 }

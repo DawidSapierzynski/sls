@@ -1,7 +1,6 @@
 package pl.wat.wcy.mwsi.sls.controllers.lTech;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,16 +22,11 @@ public class ListOfDamagesTechControler {
 
     @RequestMapping(value = "/listOfDamagesTech", method = RequestMethod.GET)
     public String getListOfDamages(HttpServletRequest request, Model model) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         List<SzkodaEntity> list = damageService.getDamagesByLTechnical(osoba);
         model.addAttribute("list", list);
 
         return "listOfDamagesTech";
 
-    }
-
-
-    private String getLogin() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

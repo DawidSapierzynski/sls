@@ -1,7 +1,6 @@
 package pl.wat.wcy.mwsi.sls.controllers.klient;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +24,10 @@ public class ListOfPolicyControler {
     @RequestMapping(value = "/listOfPolicy", method = RequestMethod.GET)
     public String getListOfPolicy(HttpServletRequest request, Model model) {
 
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         List<PolisaEntity> list = policyService.getPolicyByPerson(osoba);
         model.addAttribute("list", list);
 
         return "listOfPolicy";
-    }
-
-    private String getLogin() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

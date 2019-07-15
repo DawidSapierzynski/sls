@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.wat.wcy.mwsi.sls.service.DamageService;
-import pl.wat.wcy.mwsi.sls.service.DocumentService;
 import pl.wat.wcy.mwsi.sls.service.UserService;
 import pl.wat.wcy.mwsi.sls.models.OsobaEntity;
 import pl.wat.wcy.mwsi.sls.models.SzkodaEntity;

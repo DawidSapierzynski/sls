@@ -13,7 +13,7 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
-    public DokumentEntity save(DokumentEntity dokumentEntity) {
+    public DokumentEntity addDocument(DokumentEntity dokumentEntity) {
         return documentRepository.save(dokumentEntity);
     }
 
@@ -21,4 +21,11 @@ public class DocumentService {
         return documentRepository.findBySzkoda(szkodaEntity);
     }
 
+    public void deleteDocument(DokumentEntity dokumentEntity){
+        documentRepository.delete(dokumentEntity);
+    }
+
+    public DokumentEntity getDocumentById(Long id){
+        return documentRepository.findByIdDokument(id);
+    }
 }

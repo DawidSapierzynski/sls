@@ -1,7 +1,6 @@
 package pl.wat.wcy.mwsi.sls.controllers.lTech;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,7 @@ public class AddValuationControler {
 
     @RequestMapping(value = "/addValuation", method = RequestMethod.GET)
     public String getReportTheDamage(HttpSession session, Model model) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         List<SzkodaEntity> list = damageService.getActiveDamagesByLTechnical(osoba);
         model.addAttribute("listDamage", list);
 
@@ -41,7 +40,7 @@ public class AddValuationControler {
     @RequestMapping(value = "/addValuation", params = {"option", "amountValuation", "justificationValuation", "numberOfDamage"}, method = RequestMethod.POST)
     public String getReportTheDamage(HttpSession session, Model model, @RequestParam(value = "option") String option, @RequestParam(value = "amountValuation") double amountValuation, @RequestParam(value = "justificationValuation") String justificationValuation, @RequestParam(value = "numberOfDamage") long numberOfDamage) {
 
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         SzkodaEntity szkodaEntity = damageService.getDamagesById(numberOfDamage);
 
         if (szkodaEntity != null) {
@@ -71,7 +70,7 @@ public class AddValuationControler {
                     dokumentEntity.setTyp(TypeDocument.WYCENA.getType());
                     dokumentEntity.setZawartosc(contentsOfTheDocument);
                     dokumentEntity.setDataUtworzenia(new Timestamp(System.currentTimeMillis()));
-                    documentService.save(dokumentEntity);
+                    documentService.addDocument(dokumentEntity);
 
                     model.addAttribute("success", "Dodano wycene");
                     break;
@@ -86,9 +85,4 @@ public class AddValuationControler {
         return "addValuation";
 
     }
-
-    private String getLogin() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
 }

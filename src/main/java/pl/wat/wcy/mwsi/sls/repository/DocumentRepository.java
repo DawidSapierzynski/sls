@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface DocumentRepository extends CrudRepository<DokumentEntity, Long> {
     List<DokumentEntity> findBySzkoda(SzkodaEntity szkodaEntity);
+    DokumentEntity findByIdDokument(Long idDokument);
 }

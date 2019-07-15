@@ -2,7 +2,6 @@ package pl.wat.wcy.mwsi.sls.controllers.klient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +42,7 @@ public class ReportTheDamageControler {
 
     @RequestMapping(value = "/reportTheDamage", method = RequestMethod.GET)
     public String getReportTheDamage(HttpServletRequest request, Model model) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
         List<PolisaEntity> list = policyService.getActivePolicy(osoba);
         model.addAttribute("list", list);
 
@@ -52,7 +51,7 @@ public class ReportTheDamageControler {
 
     @RequestMapping(value = "/reportTheDamage", params = {"typeDamage", "descriptionDamage", "numberOfPolicy"}, method = RequestMethod.POST)
     public String getReportTheDamage(HttpServletRequest request, Model model, @RequestParam(value = "typeDamage") String typeDamage, @RequestParam(value = "descriptionDamage") String descriptionDamage, @RequestParam(value = "numberOfPolicy") String numberOfPolicy) {
-        OsobaEntity osoba = userService.getByLogin(getLogin());
+        OsobaEntity osoba = userService.getLoggedUser();
 
         if (typeDamage.equals("") || descriptionDamage.equals("")) {
             model.addAttribute("error", "Wypelnij pola");
@@ -80,7 +79,7 @@ public class ReportTheDamageControler {
             dokumentEntity.setTyp(TypeDocument.ZGLOSZENIESZKODY.getType());
             dokumentEntity.setZawartosc(contentsOfTheDocument);
             dokumentEntity.setSzkoda(szkodaEntity);
-            documentService.save(dokumentEntity);
+            documentService.addDocument(dokumentEntity);
 
             model.addAttribute("success", "Zgloszono");
         }
@@ -89,7 +88,4 @@ public class ReportTheDamageControler {
         return "reportTheDamage";
     }
 
-    private String getLogin() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
 }

@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "platnosc", schema = "sls")
-public class PlatnoscEntity {
+class PlatnoscEntity {
     private long idPlatnosc;
     private String status;
     private String typ;
